@@ -16,7 +16,7 @@ depends=(
     bash
     coreutils
     initramfs
-    # Read when this virtual package is provided
+    # Re-add when this virtual package is provided
     # kernel
     mkinitcpio
     pacman
