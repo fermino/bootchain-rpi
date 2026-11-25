@@ -101,15 +101,20 @@ kernel_add() {
     # Overlays; the firmware only loads overlays from
     # ${os_prefix}${overlay_prefix} when README exists
     # https://www.raspberrypi.com/documentation/computers/config_txt.html#os_prefix
-    if [[ ! -d "$OVERLAY_PATH" ]]; then
-        exit_code 1 'Overlays not found at %s' "$OVERLAY_PATH"
-    fi
+    # Overlays are optional (e.g. mainline kernels ship none); a missing
+    # directory is treated as an empty set, so stale ones are still pruned and
+    # the slot never falls back to overlays built for another kernel
     mkdir -p "$SLOT_DIR/overlays"
     declare -A OVERLAY_PROVIDED=()
-    while read -rd '' dtbo; do
-        install_copy_and_rename 644 "$dtbo" "$SLOT_DIR/overlays/${dtbo##*/}"
-        OVERLAY_PROVIDED["${dtbo##*/}"]=1
-    done < <(find "$OVERLAY_PATH" -maxdepth 1 -type f -name '*.dtbo' -print0)
+    if [[ -d "$OVERLAY_PATH" ]]; then
+        while read -rd '' dtbo; do
+            install_copy_and_rename 644 "$dtbo" "$SLOT_DIR/overlays/${dtbo##*/}"
+            OVERLAY_PROVIDED["${dtbo##*/}"]=1
+        done < <(find "$OVERLAY_PATH" -maxdepth 1 -type f -name '*.dtbo' -print0)
+    else
+        printf '%s: no overlays found at %s; dtoverlay= entries in config.txt will not load for this slot\n' \
+            "$PROGRAM" "$OVERLAY_PATH" >&2
+    fi
     # Prune overlays no longer provided, again only after the fresh copies
     while read -rd '' stale; do
         [[ -n "${OVERLAY_PROVIDED[${stale##*/}]:-}" ]] || rm -f "$stale"

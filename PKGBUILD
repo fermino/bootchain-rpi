@@ -3,7 +3,7 @@
 # Maintainer: Fermín Olaiz <fermin@olaiz.net>
 
 pkgname=bootchain-rpi
-pkgver=3
+pkgver=4
 pkgrel=1
 pkgdesc='kernel-install based boot chain for Raspberry Pi devices'
 arch=(any)
@@ -42,7 +42,7 @@ sha256sums=('e1e1b4e05feb30e90e1850d7e7dac7c32e96e813a77116aae46bb1e0c221a2ff'
             '14897c69b35782834d46d9ae7bff9530a1ef61fb4a478caf0a4b1ea9aa5f6d91'
             '11f40f4a98d4205076c6c5d0d486774c778eb8c73d93447be808980990f501fd'
             'dd8dedd85788ec39ef5c55a0e276fdc8eb5f84f00ed0a094fe40f5c8cc2bd618'
-            '84d1d261fd7f5e0ff71cc81b0f812aa6f63baef031fdfe3914aa29eb3b6e20bb'
+            '79fbee48a926a6ebb8d205d9346b6b6ba0c758dfb40cd17efa97f0205d2741d6'
             '15177c34a76adf8c51ae7a3199ce005288628a04c0306820e146361431b72b21')
 
 package() {

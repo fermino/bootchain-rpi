@@ -1,6 +1,6 @@
 pkgbase = bootchain-rpi
 	pkgdesc = kernel-install based boot chain for Raspberry Pi devices
-	pkgver = 3
+	pkgver = 4
 	pkgrel = 1
 	url = https://gitlab.archlinux.org/archlinux/rfcs/-/merge_requests/66
 	arch = any
@@ -28,7 +28,7 @@ pkgbase = bootchain-rpi
 	sha256sums = 14897c69b35782834d46d9ae7bff9530a1ef61fb4a478caf0a4b1ea9aa5f6d91
 	sha256sums = 11f40f4a98d4205076c6c5d0d486774c778eb8c73d93447be808980990f501fd
 	sha256sums = dd8dedd85788ec39ef5c55a0e276fdc8eb5f84f00ed0a094fe40f5c8cc2bd618
-	sha256sums = 84d1d261fd7f5e0ff71cc81b0f812aa6f63baef031fdfe3914aa29eb3b6e20bb
+	sha256sums = 79fbee48a926a6ebb8d205d9346b6b6ba0c758dfb40cd17efa97f0205d2741d6
 	sha256sums = 15177c34a76adf8c51ae7a3199ce005288628a04c0306820e146361431b72b21
 
 pkgname = bootchain-rpi
