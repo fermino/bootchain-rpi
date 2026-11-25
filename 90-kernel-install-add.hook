@@ -4,6 +4,10 @@ Type = Path
 Operation = Install
 Operation = Upgrade
 Target = usr/lib/modules/*/vmlinuz
+# Device trees may ship in split packages; when only they are upgraded the
+# boot slot must be refreshed even though no vmlinuz changed. Removal of dtb
+# packages is deliberately not handled here (see 60-kernel-install-remove).
+Target = usr/lib/modules/*/dtb/*
 
 [Action]
 Description = Installing kernel boot files via kernel-install (bootchain-rpi)...

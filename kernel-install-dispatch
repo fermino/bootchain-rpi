@@ -3,7 +3,10 @@
 set -euo pipefail
 
 # Dispatches calls to kernel-install add or remove based on libalpm hooks.
-# Trigger paths are passed through stdin
+# Trigger paths are passed through stdin.
+# Targets can be the kernel image itself or any other file under
+# usr/lib/modules/<kver>/ (e.g. device trees from a split package); each
+# affected kernel version is dispatched once.
 
 COMMAND=${1:?usage: kernel-install-dispatch add|remove}
 if [[ $COMMAND != 'add' && $COMMAND != 'remove' ]]; then
@@ -11,16 +14,23 @@ if [[ $COMMAND != 'add' && $COMMAND != 'remove' ]]; then
     exit 1
 fi
 
+declare -A PROCESSED=()
 while read -r TARGET; do
-    if [[ $TARGET != usr/lib/modules/*/vmlinuz ]]; then
-        continue
-    fi
+    [[ $TARGET == usr/lib/modules/*/* ]] || continue
 
     KVER=${TARGET#usr/lib/modules/}
-    KVER=${KVER%/vmlinuz}
-    if [[ -z $KVER ]]; then
+    KVER=${KVER%%/*}
+    if [[ -z $KVER || -n "${PROCESSED[$KVER]:-}" ]]; then
+        continue
+    fi
+    PROCESSED[$KVER]=1
+
+    VMLINUZ="/usr/lib/modules/$KVER/vmlinuz"
+    # A dtb-only trigger can match a module directory whose kernel image is
+    # not (yet) installed; adding it would fail.
+    if [[ $COMMAND == 'add' && ! -f $VMLINUZ ]]; then
         continue
     fi
 
-    kernel-install "$COMMAND" "$KVER" "/usr/lib/modules/$KVER/vmlinuz"
+    kernel-install "$COMMAND" "$KVER" "$VMLINUZ"
 done

@@ -87,9 +87,16 @@ kernel_add() {
     if [[ ! -d "$DTB_PATH" ]]; then
         exit_code 1 'Device trees not found at %s' "$DTB_PATH"
     fi
+    declare -A DTB_PROVIDED=()
     while read -rd '' dtb; do
         install_copy_and_rename 644 "$dtb" "$SLOT_DIR/${dtb##*/}"
+        DTB_PROVIDED["${dtb##*/}"]=1
     done < <(find "$DTB_PATH" -type f -name '*.dtb' -print0)
+    # Prune device trees no longer provided, only after the fresh copies are
+    # in place so the slot is never left without device trees
+    while read -rd '' stale; do
+        [[ -n "${DTB_PROVIDED[${stale##*/}]:-}" ]] || rm -f "$stale"
+    done < <(find "$SLOT_DIR" -maxdepth 1 -type f -name '*.dtb' -print0)
 
     # Overlays; the firmware only loads overlays from
     # ${os_prefix}${overlay_prefix} when README exists
@@ -98,9 +105,15 @@ kernel_add() {
         exit_code 1 'Overlays not found at %s' "$OVERLAY_PATH"
     fi
     mkdir -p "$SLOT_DIR/overlays"
+    declare -A OVERLAY_PROVIDED=()
     while read -rd '' dtbo; do
         install_copy_and_rename 644 "$dtbo" "$SLOT_DIR/overlays/${dtbo##*/}"
+        OVERLAY_PROVIDED["${dtbo##*/}"]=1
     done < <(find "$OVERLAY_PATH" -maxdepth 1 -type f -name '*.dtbo' -print0)
+    # Prune overlays no longer provided, again only after the fresh copies
+    while read -rd '' stale; do
+        [[ -n "${OVERLAY_PROVIDED[${stale##*/}]:-}" ]] || rm -f "$stale"
+    done < <(find "$SLOT_DIR/overlays" -maxdepth 1 -type f -name '*.dtbo' -print0)
     echo 'bootchain-rpi: marker file so the firmware loads overlays from this boot slot' \
         | install_copy_and_rename 644 /dev/stdin "$SLOT_DIR/overlays/README"
 

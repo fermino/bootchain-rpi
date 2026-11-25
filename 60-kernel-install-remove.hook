@@ -2,6 +2,10 @@
 [Trigger]
 Type = Path
 Operation = Remove
+# Boot slots follow the lifecycle of the kernel image, not of split dtb
+# packages: stale dtb copies in a slot are harmless, but removing them when
+# only the dtb package is uninstalled would break boot for the still
+# installed kernel.
 Target = usr/lib/modules/*/vmlinuz
 
 [Action]
