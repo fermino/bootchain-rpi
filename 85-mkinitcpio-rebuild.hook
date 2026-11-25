@@ -23,6 +23,15 @@ Target = usr/lib/libp11-kit.so
 Target = usr/lib/libpcsclite.so
 Target = usr/lib/modprobe.d/
 
+# Redeploy every kernel when this package itself is installed or upgraded
+# (install scripts, default cmdline, ...) so the boot slots reflect the new
+# logic
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = bootchain-rpi
+
 [Action]
 Description = Rebuilding initramfs and re-deploying kernels via kernel-install (bootchain-rpi)...
 When = PostTransaction
